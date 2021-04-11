@@ -30,8 +30,8 @@ class SearchSpider(scrapy.Spider):
         print('start_requests...')
         def init_url_by_keyword():
 
-            keywords=['居民医疗保险个人账户不存在']
-            # '城乡医保个人账户撤销','居民医保个人账户撤销','城乡医疗保险个人账户撤销','居民医疗保险个人账户撤销'
+            keywords=['KEYWORD']
+           
             date_start=datetime.strptime("2019-04-26",'%Y-%m-%d')
             date_end=datetime.strptime("2020-12-01",'%Y-%m-%d')
             time_spread=timedelta(days=1)
@@ -128,18 +128,14 @@ class SearchSpider(scrapy.Spider):
         print('comment_page...')
         
         if  response.url.endswith('page=1'):
-            #print(111111111)
             comment_page_num=re.search(r'/>&nbsp;1/(\d+)页</div>',response.text)
             if comment_page_num:
-                #print(22222222)
                 yield Request(response.url,callback=self.multi_commit,meta=response.meta,priority=4)
                     
             else:
-                #print(333333333)
                 yield Request(response.url,callback=self.single_commit,meta=response.meta,priority=4)      
 
     def single_commit(self,response):
-        #print(4444444444)
         page_node=etree.HTML(response.body)
         item=response.meta['item']
         comment_node=page_node.xpath('//div[@class="c" and contains(@id,"_")]/span[1]/text()')
@@ -149,7 +145,6 @@ class SearchSpider(scrapy.Spider):
 
     def multi_commit(self,response):
         try:
-            #print(555555555)
             item=response.meta['item']
             page_node=etree.HTML(response.body)
             comment_nodes=page_node.xpath('//div[@class="c" and contains(@id,"_")]/span[1]/text()')
